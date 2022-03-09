@@ -1,20 +1,24 @@
 <template>
   <div class="login-container">
+
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
+      <!-- 主题标题 -->
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title"> <img src="@/assets/common/login-logo.png" alt=""></h3>
       </div>
+      <!-- 主题标题 -->
 
-      <el-form-item prop="username">
+      <!-- 主题表单 -->
+      <el-form-item prop="moblie">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
+          ref="moblie"
+          v-model="loginForm.moblie"
+          placeholder="moblie"
+          name="moblie"
           type="text"
           tabindex="1"
           auto-complete="on"
@@ -40,52 +44,53 @@
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
+      <!-- 主题表单 -->
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <!-- 登录按钮 -->
+      <el-button class="login-btn" :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
+      <!-- 登录按钮 -->
 
+      <!-- 底部文字 -->
       <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: any</span>
+        还没有账号？去注册
       </div>
+      <!-- 底部文字 -->
 
     </el-form>
   </div>
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
-
 export default {
   name: 'Login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
+    const checkMobile = function(rule, value, callback) {
+      const moblieReq = /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/
+      if (moblieReq.test(value)) {
         callback()
-      }
-    }
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
       } else {
-        callback()
+        callback(new Error('手机号格式不正确'))
       }
+      console.log('validator')
     }
     return {
       loginForm: {
-        username: 'admin',
+        moblie: 'admin',
         password: '111111'
       },
+      // 检验表单的规则
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        moblie: [{ required: true, trigger: 'blur', message: '请输入用户名' },
+          { validator: checkMobile }],
+
+        password: [{ required: true, trigger: 'blur', message: '请输入密码' }]
       },
       loading: false,
       passwordType: 'password',
       redirect: undefined
     }
   },
+
   watch: {
     $route: {
       handler: function(route) {
@@ -130,12 +135,13 @@ export default {
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
 $bg:#283443;
-$light_gray:#fff;
+$light_gray:blue;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
   .login-container .el-input input {
     color: $cursor;
+    background: transparent;
   }
 }
 
@@ -165,7 +171,7 @@ $cursor: #fff;
 
   .el-form-item {
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.7);
     border-radius: 5px;
     color: #454545;
   }
@@ -180,9 +186,16 @@ $light_gray:#eee;
 .login-container {
   min-height: 100%;
   width: 100%;
-  background-color: $bg;
+  background: url('~@/assets/common/login.jpg') no-repeat;
   overflow: hidden;
+  background-size: cover;
 
+  .login-btn{
+     font-size: 24px;
+     height: 64px;
+     line-height: 32px;
+     background-color: #407ffe;
+  }
   .login-form {
     position: relative;
     width: 520px;
@@ -196,7 +209,7 @@ $light_gray:#eee;
     font-size: 14px;
     color: #fff;
     margin-bottom: 10px;
-
+   text-align: center;
     span {
       &:first-of-type {
         margin-right: 16px;
