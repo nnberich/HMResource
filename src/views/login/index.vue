@@ -10,15 +10,15 @@
       <!-- 主题标题 -->
 
       <!-- 主题表单 -->
-      <el-form-item prop="moblie">
+      <el-form-item prop="mobile">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="moblie"
-          v-model="loginForm.moblie"
-          placeholder="moblie"
-          name="moblie"
+          ref="mobile"
+          v-model="loginForm.mobile"
+          placeholder="请输入手机号"
+          name="mobile"
           type="text"
           tabindex="1"
           auto-complete="on"
@@ -34,7 +34,7 @@
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="Password"
+          placeholder="请输入密码"
           name="password"
           tabindex="2"
           auto-complete="on"
@@ -71,19 +71,20 @@ export default {
       } else {
         callback(new Error('手机号格式不正确'))
       }
-      console.log('validator')
+      console.log('用户名验证成功')
     }
     return {
       loginForm: {
-        moblie: 'admin',
-        password: '111111'
+        mobile: '13800000002',
+        password: '123456'
       },
       // 检验表单的规则
       loginRules: {
-        moblie: [{ required: true, trigger: 'blur', message: '请输入用户名' },
+        mobile: [{ required: true, trigger: 'blur', message: '请输入用户名' },
           { validator: checkMobile }],
 
-        password: [{ required: true, trigger: 'blur', message: '请输入密码' }]
+        password: [{ required: true, trigger: 'blur', message: '请输入密码' },
+          { min: 6, max: 16, message: '密码长度为6-16位' }]
       },
       loading: false,
       passwordType: 'password',
@@ -111,19 +112,11 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
+      this.$refs.loginForm.validate(async flag => {
+        if (!flag) return
+        await this.$store.dispatch('user/denglu', this.loginForm) // this.loginform将表单数据传给user中的登录方法
+        //  登录成功跳转到首页
+        this.$router.push('/')
       })
     }
   }

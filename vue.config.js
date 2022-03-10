@@ -24,7 +24,13 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js')
+    // 代理远程服务器
+    proxy: {
+      // 拦截以api开头的请求
+      '/api': {
+        target: 'http://ihrm-java.itheima.net'
+      }
+    }
   },
   configureWebpack: {
 
