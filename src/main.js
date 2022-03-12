@@ -35,6 +35,14 @@ Vue.use(ElementUI, { locale })
 // 关闭生产阶段的提示
 Vue.config.productionTip = false
 
+Vue.directive('imgerror', {
+  inserted: function(el, binging) {
+    el.onerror = function() {
+      el.src = binging.value
+    }
+    console.log('钩子函数')
+  }
+})
 new Vue({
   el: '#app',
   router,

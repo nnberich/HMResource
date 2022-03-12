@@ -1,31 +1,32 @@
 <template>
   <div class="navbar">
     <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
-
-    <breadcrumb class="breadcrumb-container" />
-
+    <div class="app-breadcrumb">
+      江苏传智播客教育科技股份有限公司
+      <span class="breadBtn">体验版</span>
+    </div>
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
-          <i class="el-icon-caret-bottom" />
+          <img v-imgerror="defaultImg" :src="userInfo.staffPhoto " class="user-avatar">
+          <span class="name">{{ userInfo.username }}</span>
+          <i class="el-icon-caret-bottom " style="color:#fff" />
         </div>
+        <!-- 下拉菜单 -->
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
-            <el-dropdown-item>
-              Home
-            </el-dropdown-item>
+            <el-dropdown-item>首页</el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>Docs</el-dropdown-item>
+
+          <a target="_blank" href="https://github.com/nnberich/HMResource">
+            <el-dropdown-item>项目地址</el-dropdown-item>
           </a>
           <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">Log Out</span>
+            <span style="display:block;">退出</span>
           </el-dropdown-item>
         </el-dropdown-menu>
+        <!-- 下拉菜单 -->
+
       </el-dropdown>
     </div>
   </div>
@@ -33,18 +34,22 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-
+import defaultImg from '@/assets/common/head.jpg'
 export default {
   components: {
-    Breadcrumb,
     Hamburger
+  },
+  data() {
+    return {
+      defaultImg: defaultImg
+    }
   },
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
+      'avatar',
+      'userInfo'
     ])
   },
   methods: {
@@ -53,9 +58,10 @@ export default {
     },
     async logout() {
       await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      this.$router.push('/login')
     }
   }
+
 }
 </script>
 
@@ -66,6 +72,7 @@ export default {
   position: relative;
   background: #fff;
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  background-image: -webkit-linear-gradient(left, #596ca3, #5b8cff);
 
   .hamburger-container {
     line-height: 46px;
@@ -78,7 +85,27 @@ export default {
     &:hover {
       background: rgba(0, 0, 0, .025)
     }
+
   }
+
+    .app-breadcrumb {
+  display: inline-block;
+  font-size: 18px;
+  line-height: 50px;
+  margin-left: 10px;
+  color: #ffffff;
+  cursor: text;
+  .breadBtn {
+    background: #84a9fe;
+    font-size: 14px;
+    padding: 0 10px;
+    display: inline-block;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 10px;
+    margin-left: 15px;
+  }
+}
 
   .breadcrumb-container {
     float: left;
@@ -88,7 +115,6 @@ export default {
     float: right;
     height: 100%;
     line-height: 50px;
-
     &:focus {
       outline: none;
     }
@@ -109,13 +135,14 @@ export default {
           background: rgba(0, 0, 0, .025)
         }
       }
+
     }
 
     .avatar-container {
       margin-right: 30px;
 
       .avatar-wrapper {
-        margin-top: 5px;
+        // margin-top: 5px;
         position: relative;
 
         .user-avatar {
@@ -123,13 +150,17 @@ export default {
           width: 40px;
           height: 40px;
           border-radius: 10px;
+          vertical-align: middle;
         }
-
+        .name {
+          margin-left: 5px;
+        }
         .el-icon-caret-bottom {
           cursor: pointer;
           position: absolute;
           right: -20px;
-          top: 25px;
+          vertical-align: middle;
+          top: 18px;
           font-size: 12px;
         }
       }
