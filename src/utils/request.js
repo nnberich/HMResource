@@ -4,7 +4,7 @@ import { Message } from 'element-ui'
 import { getToken, getTokenTime } from './auth'
 import router from '@/router'
 // import store from '@/store'
-const timeOut = 3 * 1000
+const timeOut = 7200 * 1000
 // 执行npm run Dev ，webpack会给node添加一个环境变量
 // process.env.NODE_ENV变成development
 // 执行npm run build
