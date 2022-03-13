@@ -1,6 +1,10 @@
+import store from '@/store'
 import axios from 'axios'
 import { Message } from 'element-ui'
-
+import { getToken, getTokenTime } from './auth'
+import router from '@/router'
+// import store from '@/store'
+const timeOut = 3 * 1000
 // 执行npm run Dev ，webpack会给node添加一个环境变量
 // process.env.NODE_ENV变成development
 // 执行npm run build
@@ -14,7 +18,21 @@ const request = axios.create({
 })
 
 // 添加请求拦截器
-request.interceptors.request.use()
+request.interceptors.request.use((config) => {
+// 请求配置项
+  if (getToken()) {
+    const tokenTime = getTokenTime()
+    const currentTime = Date.now()
+    if (currentTime - tokenTime > timeOut) {
+      store.dispatch('user/logout')
+
+      router.push('/login')
+      return Promise.reject(new Error('登录超时'))
+    }
+    config.headers.Authorization = 'Bearer ' + getToken()
+  }
+  return config
+})
 
 // 添加请求拦截器
 request.interceptors.response.use(
@@ -28,11 +46,22 @@ request.interceptors.response.use(
       return data
     }
     Message.error(message)
-
-    return Promise.reject(message)
+    return Promise.reject(new Error(message))
   }, function(error) {
     // 对响应错误做点什么
-    Message.error('系统异常')
+    if (error.respons && error.respons.status) {
+      store.dispatch('user/logout')
+      router.push('/login')
+      Message.error('登录超时')
+      return Promise.reject(error)
+    } else {
+      Message.error('系统异常')
+    }
+    if (error.message === '登录超时') {
+      Message.error('登录超时')
+    } else {
+      Message.error('系统异常')
+    }
     return Promise.reject(error)
   }
 )

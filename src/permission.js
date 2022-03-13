@@ -16,7 +16,9 @@ router.beforeEach((to, from, next) => {
       next('/')
     } else {
       // 2.2 不为登录页，禁止跳到登录页
-      store.dispatch('user/getUserInfo')
+      if (!store.getters.userInfo.id) {
+        store.dispatch('user/getUserInfo')
+      }
       next()
     }
   } else {
